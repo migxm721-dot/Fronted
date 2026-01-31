@@ -1,0 +1,126 @@
+entrypoint = "README.md"
+modules = ["nodejs-20", "nix", "postgresql-16"]
+
+[nix]
+channel = "stable-25_05"
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3002
+
+[[ports]]
+localPort = 5173
+externalPort = 5173
+
+[[ports]]
+localPort = 5174
+externalPort = 4200
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[[ports]]
+localPort = 8082
+externalPort = 3000
+
+[[ports]]
+localPort = 8083
+externalPort = 3001
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "EAS Init"
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx eas init"
+
+[[workflows.workflow]]
+name = "EAS Update"
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx eas update --auto"
+
+[[workflows.workflow]]
+name = "EAS Publish Preview iOS"
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx eas build --platform ios --profile preview"
+
+[[workflows.workflow]]
+name = "EAS Publish Preview Android"
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx eas build --platform android --profile preview"
+
+[[workflows.workflow]]
+name = "Start App"
+author = 50803945
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node backend/server.js & sleep 3 && npx expo start --tunnel --port 8081"
+
+[[workflows.workflow]]
+name = "Metro Bundler"
+author = 47184370
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --tunnel --port 8081"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Development Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Admin Panel Dev"
+
+[[workflows.workflow]]
+name = "Development Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node backend/server.js"
+
+[[workflows.workflow]]
+name = "Admin Panel Dev"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd admin-panel && npm run dev"
+waitForPort = 5173
+
+[agent]
+expertMode = true
