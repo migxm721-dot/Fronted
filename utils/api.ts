@@ -1,6 +1,6 @@
 import { devLog } from '@/utils/devLog';
 
-const API_BASE_URL = 'https://ac07541c-456a-430b-9561-8763df749320-00-2tcpd5zb2lgeg.pike.replit.dev';
+const API_BASE_URL = 'https://api.migxchat.net';
 
 export const API_ENDPOINTS = {
   AUTH: {
